@@ -49,7 +49,7 @@ const Basket: FC = () => {
                                 <button onClick={() => handleDecrement(e.id)} className='button-count'>-</button>
                                 <p className='furniture-show-desc'>Quantity {e.quantity ? e.quantity : '1'}</p>
                                 <button onClick={() => handleIncrement(e.id)} className='button-count'>+</button>
-                                <p className='furniture-show-price'>Price {e.finallyPrice ? e.finallyPrice : e.price}$</p>
+                                <p className='furniture-show-price'>Price {e.finallyPrice && !e.quantity ? e.finallyPrice : +e.price * +e.quantity}$</p>
                             </div>
                             <div className='row-info'>
                                 <button onClick={() => handleDelete(e.id)} className='action'>Delete</button>

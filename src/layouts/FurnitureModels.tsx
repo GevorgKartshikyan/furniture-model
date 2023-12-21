@@ -13,6 +13,7 @@ const FurnitureModels: FC = () => {
     }
     return (
         <div className='furniture-show-container'>
+            <h3 className='title'>All Models</h3>
             {furniture.map((e) => (
                 <FurnitureShow
                     key={e.id}

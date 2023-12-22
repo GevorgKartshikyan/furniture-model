@@ -1,6 +1,6 @@
 export interface FurnitureShowProps {
     id: string
-    image: string
+    image: string[]
     desc: string
     price: string
     width: string
@@ -11,7 +11,7 @@ export interface FurnitureShowProps {
 }
 export interface FurnitureShowAction {
     id: string
-    image: string
+    image: string[]
     desc: string
     price: string
     width: string

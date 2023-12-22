@@ -15,7 +15,7 @@ const App: FC = () => {
     useEffect(() => {
         // @ts-ignore
         conversation.current.scrollIntoView({ behavior: 'smooth' })
-    }, [selectedFurniture,basket]);
+    }, [selectedFurniture.id,basket]);
 
     return (
         <>

@@ -58,6 +58,10 @@ button {
     text-align: center;
     margin-top: 15px;
     margin-bottom: 10px;
+
+    &.basket-desc {
+      max-width: 150px;
+    }
   }
 }
 
@@ -274,10 +278,32 @@ button {
 }
 
 
-.input-block{
-  input{
+.input-block {
+  input {
     font-size: 18px;
     width: 40px;
     margin-top: 20px;
+  }
+}
+
+.basket-shop {
+  .basket-shop-colum {
+    .basket-shop-row {
+      &-img {
+
+      }
+
+      &-desc {
+
+      }
+
+      &-quantity {
+
+      }
+
+      &-price {
+
+      }
+    }
   }
 }

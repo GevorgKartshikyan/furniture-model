@@ -333,7 +333,7 @@ const SelectedFurnitureInfo: FC<FurnitureShowAction> = ({image, width, height, d
                 shouldCloseOnOverlayClick={true}
                 isOpen={isOpen}
             >
-                <Model/>
+                <Model onCloseModal={() => { setIsOpen(false) }}/>
             </Modal>
         </>
     )

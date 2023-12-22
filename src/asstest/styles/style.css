@@ -51,6 +51,9 @@ button {
   margin-top: 15px;
   margin-bottom: 10px;
 }
+.furniture-show-desc.basket-desc {
+  max-width: 150px;
+}
 
 .selected-furniture {
   width: 100%;

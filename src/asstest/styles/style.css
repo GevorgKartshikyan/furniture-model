@@ -240,4 +240,10 @@ button {
   color: yellow;
 }
 
+.input-block input {
+  font-size: 18px;
+  width: 40px;
+  margin-top: 20px;
+}
+
 /*# sourceMappingURL=style.css.map */

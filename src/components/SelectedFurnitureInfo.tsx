@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useEffect, useState} from "react";
+import React, {ChangeEvent, FC, useCallback, useEffect, useState} from "react";
 import {FurnitureShowAction} from "../helpers/types";
 import {useDispatch, useSelector} from "react-redux";
 import {addBasket, changeColor} from "../store/actions/furniture";
@@ -56,12 +56,14 @@ const SelectedFurnitureInfo: FC<FurnitureShowAction> = ({image, width, height, d
     const [imageIndex, setImageIndex] = useState(1)
     const [coating, setCoatings] = useState('')
     const [selectedWood, setSelectedWood] = useState({})
+    const [edge , setEdge] = useState('2')
     const [sidesBoard, setSidesBoard] = useState({
         sides: {
             material: options[0].value,
             coating: {
                 size: 0,
                 coatingMaterial: '',
+                edge:''
             },
             color: ''
         },
@@ -210,6 +212,27 @@ const SelectedFurnitureInfo: FC<FurnitureShowAction> = ({image, width, height, d
                                         style={{backgroundImage: `url(${e.image})`, width: 50, height: 50}}
                                     />
                                 ))}
+                            </div>
+                            <div className='input-block'>
+                                <p className='furniture-show-price' style={{marginTop: 15}}>Select Edge Thickness</p>
+                                <input min={2} max={12} type="number" value={edge}
+                                       onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                                           setSidesBoard((prevSidesBoard) => ({
+                                               ...prevSidesBoard,
+                                               'sides': {
+                                                   // @ts-ignore
+                                                   ...sidesBoard['sides'],
+                                                   coating: {
+                                                       // @ts-ignore
+                                                       ...sidesBoard['sides']['coating'],
+                                                       edge: event.target.value
+                                                   }
+                                               }
+                                           }));
+                                           setEdge(event.target.value)
+                                       }}/>
+                                <span>MM</span>
+                                <p>(min 2mm max 12mm)</p>
                             </div>
                         </>
                     ) : null}

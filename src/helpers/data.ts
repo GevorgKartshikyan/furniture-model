@@ -14,6 +14,10 @@ import furniture4 from "../asstest/images/furnitures/furniture4.jpeg";
 import furniture4_2 from "../asstest/images/furnitures/furniture4-2.png";
 import furniture4_3 from "../asstest/images/furnitures/furniture4-3.png";
 import furniture4_4 from "../asstest/images/furnitures/furniture4-4.png";
+import furniture5 from "../asstest/images/furnitures/furniture5.png";
+import furniture5_1 from "../asstest/images/furnitures/furniture5-1.png";
+import furniture5_2 from "../asstest/images/furnitures/furniture5-2.png";
+import furniture5_3 from "../asstest/images/furnitures/furniture5-3.png";
 import boardBgAcacia from '../asstest/images/boards/board-acacia.jpg'
 import boardBgOak from '../asstest/images/boards/board-oak.jpg'
 import boardBgAruba from '../asstest/images/boards/board-aruba.jpg'
@@ -36,6 +40,16 @@ export const boards = [
 export const furniture = [
     {
         id: "1",
+        price: "2408$",
+        desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing.',
+        image: [furniture5, furniture5_1, furniture5_2, furniture5_3],
+        width: '806',
+        height: "296",
+        depth: "536",
+        color: "white"
+    },
+    {
+        id: "11",
         price: "2408$",
         desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing.',
         image: [furniture1, furniture1_2, furniture1_3, furniture1_4],
@@ -126,4 +140,5 @@ export const sizes = [
         facades: "facades 716x296",
         checked: false
     },
+
 ]

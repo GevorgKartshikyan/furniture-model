@@ -5,10 +5,11 @@ import reportWebVitals from './reportWebVitals';
 import '../src/asstest/styles/style.scss'
 import store from './store'
 import { Provider } from 'react-redux'
-
+import Modal from 'react-modal';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+Modal.setAppElement('#root');
 root.render(
     <Provider store={store}>
         <App />

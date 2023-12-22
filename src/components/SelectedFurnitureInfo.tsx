@@ -5,11 +5,18 @@ import {addBasket, changeColor} from "../store/actions/furniture";
 import {toast} from "react-toastify";
 import {sides as sidesArr, boards, variants, options} from "../helpers/data";
 import Select from 'react-select';
+import Model from "./Model";
+import Modal from "react-modal";
 
 const SelectedFurnitureInfo: FC<FurnitureShowAction> = ({image, width, height, desc, depth, id, price, color}) => {
     const dispatch = useDispatch()
     // @ts-ignore
-    const basket = useSelector((state => state.furniture.basket))
+    const [selectedSizes, setSelectedSizes] = useState({
+        width: '',
+        height: '',
+        depth: ''
+    })
+    const [isOpen, setIsOpen] = useState(false)
     const [sizes, setSizes] = useState([
         {
             id: "1",
@@ -56,14 +63,14 @@ const SelectedFurnitureInfo: FC<FurnitureShowAction> = ({image, width, height, d
     const [imageIndex, setImageIndex] = useState(1)
     const [coating, setCoatings] = useState('')
     const [selectedWood, setSelectedWood] = useState({})
-    const [edge , setEdge] = useState('2')
+    const [edge, setEdge] = useState('2')
     const [sidesBoard, setSidesBoard] = useState({
         sides: {
             material: options[0].value,
             coating: {
                 size: 0,
                 coatingMaterial: '',
-                edge:''
+                edge: ''
             },
             color: ''
         },
@@ -144,6 +151,7 @@ const SelectedFurnitureInfo: FC<FurnitureShowAction> = ({image, width, height, d
             }))
         );
         setSelectedId(id)
+        setSelectedSizes(sizes.filter((e) => e.id === id)[0])
     };
     const handleQuantity = (method: string, id: string) => {
         setSizes(sizes.map((e) => {
@@ -173,149 +181,161 @@ const SelectedFurnitureInfo: FC<FurnitureShowAction> = ({image, width, height, d
         }
     }, [selectedId, sizes, sidesBoard])
     return (
-        <div className='selected-furniture'>
-            <div className='image-block'>
-                <button onClick={() => changeSide('-')} className='arrow-button'>
-                    <span className='arrow'>&#8592;</span>
-                </button>
-                <img src={image[imageIndex]} alt='furniture'/>
-                <button onClick={() => changeSide('+')} className='arrow-button'>
-                    <span className='arrow'>&#8594;</span>
-                </button>
-            </div>
-            <div className='variants'>
-                <div style={{marginLeft: 20}}>
-                    <p className='furniture-show-price'>Select Color</p>
-                    <div style={{display: "flex"}}>
-                        {variants.map((e) => (
-                            <div
-                                onClick={() => handleChangeColor(e.id, e.color, sidesArr[imageIndex - 1].key)}
-                                className={`variant ${color === e.color ? 'selected' : ''}`}
-                                key={e.id}
-                                style={{backgroundColor: e.color}}
-                            />
-                        ))}
-                    </div>
-                    {sidesArr[imageIndex - 1].key === 'sides' ? (
-                        <>
-                            <p style={{marginTop: 20}}
-                               className='furniture-show-price'
-                            >
-                                Select coating
-                            </p>
-                            <div style={{display: "flex"}}>
-                                {boards.map((e) => (
-                                    <div
-                                        onClick={() => handleSetCoating(e.material, 'sides')}
-                                        key={e.id}
-                                        className={`variant ${coating === e.material ? 'selected' : ''}`}
-                                        style={{backgroundImage: `url(${e.image})`, width: 50, height: 50}}
-                                    />
-                                ))}
-                            </div>
-                            <div className='input-block'>
-                                <p className='furniture-show-price' style={{marginTop: 15}}>Select Edge Thickness</p>
-                                <input min={2} max={12} type="number" value={edge}
-                                       onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                                           setSidesBoard((prevSidesBoard) => ({
-                                               ...prevSidesBoard,
-                                               'sides': {
-                                                   // @ts-ignore
-                                                   ...sidesBoard['sides'],
-                                                   coating: {
-                                                       // @ts-ignore
-                                                       ...sidesBoard['sides']['coating'],
-                                                       edge: event.target.value
-                                                   }
-                                               }
-                                           }));
-                                           setEdge(event.target.value)
-                                       }}/>
-                                <span>MM</span>
-                                <p>(min 2mm max 12mm)</p>
-                            </div>
-                        </>
-                    ) : null}
-                    <p style={{marginTop: 20}}
-                       className='furniture-show-price'>Select material
-                        of {sidesArr[imageIndex - 1]['label']} {imageIndex === 2 || imageIndex === 3 ? 'Sides' : 'Side'}
-                    </p>
-                    <div style={{marginTop: 20}}>
-                        <Select
-                            // value={selectedWood}
-                            placeholder='Select Wood'
-                            onChange={(selectedOption) => handleChangeWood(selectedOption, sidesArr[imageIndex - 1].key)}
-                            options={options}
-                        />
-                    </div>
+        <>
+            {id === "1" && <button onClick={() => setIsOpen(true)} className='save-button'>open 3D</button>}
+            <div className='selected-furniture'>
+                <div className='image-block'>
+                    <button onClick={() => changeSide('-')} className='arrow-button'>
+                        <span className='arrow'>&#8592;</span>
+                    </button>
+                    <img src={image[imageIndex]} alt='furniture'/>
+                    <button onClick={() => changeSide('+')} className='arrow-button'>
+                        <span className='arrow'>&#8594;</span>
+                    </button>
                 </div>
-                <div className='selected-furniture-desc'>
-                    <p className='furniture-show-price'>{price}</p>
-                    <p className='furniture-show-desc'>{desc}</p>
-                    <p style={{textTransform: 'uppercase'}} className='furniture-show-desc'>{color}</p>
-                    <p className='furniture-show-desc'>
-                        {basket.width && basket.height && basket.depth ?
-                            basket.width + ' x ' + basket.height + ' x ' + basket.depth :
-                            width + 'x' + height + ' x ' + depth}
-                    </p>
-                </div>
-            </div>
-            <div style={{width: "53.3333%", marginLeft: 30, marginTop: '50px'}}>
-                <table className="data-table">
-                    <thead>
-                    <tr>
-                        <th className="header-cell">Art</th>
-                        <th className="header-cell">Size</th>
-                        <th className="header-cell">Facades</th>
-                        <th className="header-cell">Price</th>
-                        <th className="header-cell">Quantity</th>
-                        <th className="header-cell">Selected</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {sizes.map((e) => (
-                        <tr key={e.id} className='table-row' onClick={() => handleSelectSize(e.id)}>
-                            <td className="data-cell">{e.id}</td>
-                            <td className="data-cell">
-                                {e.width}X{e.height}X{e.depth}
-                            </td>
-                            <td className="data-cell">
-                                {e.facades}
-                            </td>
-                            <td className="data-cell">
-                                {e.price}$
-                            </td>
-                            <td className="data-cell button">
-                                <p>{e.quantity}</p>
-                                <div className='button-box'>
-                                    <button onClick={() => handleQuantity('+', e.id)} className='button-count'>+
-                                    </button>
-                                    <button onClick={() => handleQuantity('-', e.id)} className='button-count'>
-                                        -
-                                    </button>
-                                </div>
-                            </td>
-                            <td className="data-cell">
-                                {e.checked ? (<svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="25"
-                                    height="24"
-                                    viewBox="0 0 25 24"
-                                    fill="none"
+                <div className='variants'>
+                    <div style={{marginLeft: 20}}>
+                        <p className='furniture-show-price'>Select Color</p>
+                        <div style={{display: "flex"}}>
+                            {variants.map((e) => (
+                                <div
+                                    onClick={() => handleChangeColor(e.id, e.color, sidesArr[imageIndex - 1].key)}
+                                    className={`variant ${color === e.color ? 'selected' : ''}`}
+                                    key={e.id}
+                                    style={{backgroundColor: e.color}}
+                                />
+                            ))}
+                        </div>
+                        {sidesArr[imageIndex - 1].key === 'sides' ? (
+                            <>
+                                <p style={{marginTop: 20}}
+                                   className='furniture-show-price'
                                 >
-                                    <path
-                                        d="M10.063 16.4L6.06299 12.4L7.46299 11L10.063 13.6L16.663 7L18.063 8.4L10.063 16.4Z"
-                                        fill="blue"
-                                    />
-                                </svg>) : <div className='square'/>}
-                            </td>
+                                    Select coating
+                                </p>
+                                <div style={{display: "flex"}}>
+                                    {boards.map((e) => (
+                                        <div
+                                            onClick={() => handleSetCoating(e.material, 'sides')}
+                                            key={e.id}
+                                            className={`variant ${coating === e.material ? 'selected' : ''}`}
+                                            style={{backgroundImage: `url(${e.image})`, width: 50, height: 50}}
+                                        />
+                                    ))}
+                                </div>
+                                <div className='input-block'>
+                                    <p className='furniture-show-price' style={{marginTop: 15}}>Select Edge
+                                        Thickness</p>
+                                    <input min={2} max={12} type="number" value={edge}
+                                           onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                                               setSidesBoard((prevSidesBoard) => ({
+                                                   ...prevSidesBoard,
+                                                   'sides': {
+                                                       // @ts-ignore
+                                                       ...sidesBoard['sides'],
+                                                       coating: {
+                                                           // @ts-ignore
+                                                           ...sidesBoard['sides']['coating'],
+                                                           edge: event.target.value
+                                                       }
+                                                   }
+                                               }));
+                                               setEdge(event.target.value)
+                                           }}/>
+                                    <span>MM</span>
+                                    <p>(min 2mm max 12mm)</p>
+                                </div>
+                            </>
+                        ) : null}
+                        <p style={{marginTop: 20}}
+                           className='furniture-show-price'>Select material
+                            of {sidesArr[imageIndex - 1]['label']} {imageIndex === 2 || imageIndex === 3 ? 'Sides' : 'Side'}
+                        </p>
+                        <div style={{marginTop: 20}}>
+                            <Select
+                                // value={selectedWood}
+                                placeholder='Select Wood'
+                                onChange={(selectedOption) => handleChangeWood(selectedOption, sidesArr[imageIndex - 1].key)}
+                                options={options}
+                            />
+                        </div>
+                    </div>
+                    <div className='selected-furniture-desc'>
+                        <p className='furniture-show-price'>{price}</p>
+                        <p className='furniture-show-desc'>{desc}</p>
+                        <p style={{textTransform: 'uppercase'}} className='furniture-show-desc'>{color}</p>
+                        <p className='furniture-show-desc'>
+                            {(selectedSizes.width && selectedSizes.height && selectedSizes.depth) ?
+                                (selectedSizes.width + ' x ' + selectedSizes.height + 'x' + selectedSizes.depth) :
+                                (width + 'x' + height + 'x' + depth)
+                            }
+                        </p>
+                    </div>
+                </div>
+                <div style={{width: "53.3333%", marginLeft: 30, marginTop: '50px'}}>
+                    <table className="data-table">
+                        <thead>
+                        <tr>
+                            <th className="header-cell">Art</th>
+                            <th className="header-cell">Size</th>
+                            <th className="header-cell">Facades</th>
+                            <th className="header-cell">Price</th>
+                            <th className="header-cell">Quantity</th>
+                            <th className="header-cell">Selected</th>
                         </tr>
-                    ))}
-                    </tbody>
-                </table>
-                <button onClick={handleSave} className='save-button'>Save</button>
+                        </thead>
+                        <tbody>
+                        {sizes.map((e) => (
+                            <tr key={e.id} className='table-row' onClick={() => handleSelectSize(e.id)}>
+                                <td className="data-cell">{e.id}</td>
+                                <td className="data-cell">
+                                    {e.width}X{e.height}X{e.depth}
+                                </td>
+                                <td className="data-cell">
+                                    {e.facades}
+                                </td>
+                                <td className="data-cell">
+                                    {e.price}$
+                                </td>
+                                <td className="data-cell button">
+                                    <p>{e.quantity}</p>
+                                    <div className='button-box'>
+                                        <button onClick={() => handleQuantity('+', e.id)} className='button-count'>+
+                                        </button>
+                                        <button onClick={() => handleQuantity('-', e.id)} className='button-count'>
+                                            -
+                                        </button>
+                                    </div>
+                                </td>
+                                <td className="data-cell">
+                                    {e.checked ? (<svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="25"
+                                        height="24"
+                                        viewBox="0 0 25 24"
+                                        fill="none"
+                                    >
+                                        <path
+                                            d="M10.063 16.4L6.06299 12.4L7.46299 11L10.063 13.6L16.663 7L18.063 8.4L10.063 16.4Z"
+                                            fill="blue"
+                                        />
+                                    </svg>) : <div className='square'/>}
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                    <button onClick={handleSave} className='save-button'>Save</button>
+                </div>
             </div>
-        </div>
+            <Modal
+                onRequestClose={() => setIsOpen(false)}
+                shouldCloseOnOverlayClick={true}
+                isOpen={isOpen}
+            >
+                <Model/>
+            </Modal>
+        </>
     )
 }
 export default SelectedFurnitureInfo

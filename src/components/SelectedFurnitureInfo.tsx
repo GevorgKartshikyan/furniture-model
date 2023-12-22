@@ -1,56 +1,15 @@
 import React, {FC, useCallback, useEffect, useState} from "react";
 import {FurnitureShowAction} from "../helpers/types";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {addBasket, changeColor} from "../store/actions/furniture";
 import {toast} from "react-toastify";
-import {sides as sideArr, boards, variants, options} from "../helpers/data";
+import {sides as sidesArr, boards, variants, options} from "../helpers/data";
 import Select from 'react-select';
 
 const SelectedFurnitureInfo: FC<FurnitureShowAction> = ({image, width, height, desc, depth, id, price, color}) => {
     const dispatch = useDispatch()
-    const [selectedId, setSelectedId] = useState('')
-    const [imageIndex, setImageIndex] = useState(1)
-    const [coating, setCoatings] = useState(boards[0])
-    const [sidesBoard, setSidesBoard] = useState({
-        front: options[0].value,
-        sides: options[0].value,
-        back: options[0].value
-    })
-    const handleChangeWood = (selectedOption: any, imageIndex: number, selectedKey: string) => {
-        setSelectedWood(selectedOption);
-        setSidesBoard((prevSidesBoard) => ({
-            ...prevSidesBoard,
-            [selectedKey]: selectedOption.label
-        }));
-    };
-    console.log(sidesBoard)
-    const [selectedWood ,setSelectedWood] = useState({})
-    useEffect(() => {
-        setImageIndex(1)
-    }, [id]);
-    const changeSide = (method: string) => {
-        if (method === '+') {
-            setImageIndex((prevState: number): number => {
-                let newValue = prevState + 1
-                if (prevState === image.length - 1) {
-                    newValue = 1
-                }
-                return newValue
-            })
-        }
-        if (method === '-') {
-            setImageIndex((prevState: number): number => {
-                let newValue = prevState - 1
-                if (prevState === 1) {
-                    newValue = image.length - 1
-                }
-                return newValue
-            })
-        }
-    }
-    const handleChangeColor = (id: string, color: string): void => {
-        dispatch(changeColor({id, color}))
-    }
+    // @ts-ignore
+    const basket = useSelector((state => state.furniture.basket))
     const [sizes, setSizes] = useState([
         {
             id: "1",
@@ -93,6 +52,88 @@ const SelectedFurnitureInfo: FC<FurnitureShowAction> = ({image, width, height, d
             quantity: 0
         },
     ])
+    const [selectedId, setSelectedId] = useState('')
+    const [imageIndex, setImageIndex] = useState(1)
+    const [coating, setCoatings] = useState('')
+    const [selectedWood, setSelectedWood] = useState({})
+    const [sidesBoard, setSidesBoard] = useState({
+        sides: {
+            material: options[0].value,
+            coating: {
+                size: 0,
+                coatingMaterial: '',
+            },
+            color: ''
+        },
+        back: {
+            material: options[0].value,
+            color: '' || variants[2].color
+        },
+    })
+    const handleSetCoating = (material: string, selectedKey: string) => {
+        setCoatings(material);
+        // @ts-ignore
+        setSidesBoard((prevSidesBoard) => ({
+            ...prevSidesBoard,
+            'sides': {
+                // @ts-ignore
+                ...sidesBoard[selectedKey],
+                coating: {
+                    // @ts-ignore
+                    ...sidesBoard[selectedKey]['coating'],
+                    coatingMaterial: material,
+                    size: (4 * (+depth * +height)) / 1000000
+                }
+            }
+        }));
+    }
+
+    const handleChangeWood = (selectedOption: any, selectedKey: string) => {
+        setSelectedWood(selectedOption);
+        setSidesBoard((prevSidesBoard) => ({
+            ...prevSidesBoard,
+            [selectedKey]: {
+                // @ts-ignore
+                ...sidesBoard[selectedKey],
+                material: selectedOption.label
+            }
+        }));
+    };
+    useEffect(() => {
+        setImageIndex(1)
+    }, [id]);
+    const changeSide = (method: string) => {
+        if (method === '+') {
+            setImageIndex((prevState: number): number => {
+                let newValue = prevState + 1
+                if (prevState === image.length - 1) {
+                    newValue = 1
+                }
+                return newValue
+            })
+        }
+        if (method === '-') {
+            setImageIndex((prevState: number): number => {
+                let newValue = prevState - 1
+                if (prevState === 1) {
+                    newValue = image.length - 1
+                }
+                return newValue
+            })
+        }
+    }
+    const handleChangeColor = (id: string, color: string, selectedKey: string): void => {
+        dispatch(changeColor({id, color}))
+        // @ts-ignore
+        setSidesBoard((prevSidesBoard) => ({
+            ...prevSidesBoard,
+            [selectedKey]: {
+                // @ts-ignore
+                ...sidesBoard[selectedKey],
+                color: color || variants[2].color
+            }
+        }));
+    }
     const handleSelectSize = (id: string): void => {
         setSizes((prevSizes) =>
             prevSizes.map((size) => ({
@@ -122,12 +163,13 @@ const SelectedFurnitureInfo: FC<FurnitureShowAction> = ({image, width, height, d
                 id,
                 color,
                 image,
-                desc
+                desc,
+                sidesDetails: sidesBoard,
             }))
         } else {
             toast.error('Please select model :)')
         }
-    }, [selectedId, sizes])
+    }, [selectedId, sizes, sidesBoard])
     return (
         <div className='selected-furniture'>
             <div className='image-block'>
@@ -140,42 +182,46 @@ const SelectedFurnitureInfo: FC<FurnitureShowAction> = ({image, width, height, d
                 </button>
             </div>
             <div className='variants'>
-                <div>
+                <div style={{marginLeft: 20}}>
                     <p className='furniture-show-price'>Select Color</p>
                     <div style={{display: "flex"}}>
                         {variants.map((e) => (
                             <div
-                                onClick={() => handleChangeColor(e.id, e.color)}
+                                onClick={() => handleChangeColor(e.id, e.color, sidesArr[imageIndex - 1].key)}
                                 className={`variant ${color === e.color ? 'selected' : ''}`}
                                 key={e.id}
                                 style={{backgroundColor: e.color}}
                             />
                         ))}
                     </div>
-                    <p style={{marginTop: 20}}
-                       className='furniture-show-price'
-                    >
-                        Select coating
-                    </p>
-                    <div style={{display: "flex"}}>
-                        {boards.map((e) => (
-                            <div
-                                onClick={() => setCoatings(e)}
-                                key={e}
-                                className={`variant ${coating === e ? 'selected' : ''}`}
-                                style={{backgroundImage: `url(${e})`, width: 50, height: 50}}
-                            />
-                        ))}
-                    </div>
+                    {sidesArr[imageIndex - 1].key === 'sides' ? (
+                        <>
+                            <p style={{marginTop: 20}}
+                               className='furniture-show-price'
+                            >
+                                Select coating
+                            </p>
+                            <div style={{display: "flex"}}>
+                                {boards.map((e) => (
+                                    <div
+                                        onClick={() => handleSetCoating(e.material, 'sides')}
+                                        key={e.id}
+                                        className={`variant ${coating === e.material ? 'selected' : ''}`}
+                                        style={{backgroundImage: `url(${e.image})`, width: 50, height: 50}}
+                                    />
+                                ))}
+                            </div>
+                        </>
+                    ) : null}
                     <p style={{marginTop: 20}}
                        className='furniture-show-price'>Select material
-                        of {sideArr[imageIndex - 1]['label']} {imageIndex === 2 || imageIndex === 4 ? 'Sides' : 'Side'}
+                        of {sidesArr[imageIndex - 1]['label']} {imageIndex === 2 || imageIndex === 3 ? 'Sides' : 'Side'}
                     </p>
-                    <div style={{marginTop:20}}>
+                    <div style={{marginTop: 20}}>
                         <Select
                             // value={selectedWood}
                             placeholder='Select Wood'
-                            onChange={(selectedOption)=>handleChangeWood(selectedOption, imageIndex - 1, sideArr[imageIndex - 1].key)}
+                            onChange={(selectedOption) => handleChangeWood(selectedOption, sidesArr[imageIndex - 1].key)}
                             options={options}
                         />
                     </div>
@@ -184,7 +230,11 @@ const SelectedFurnitureInfo: FC<FurnitureShowAction> = ({image, width, height, d
                     <p className='furniture-show-price'>{price}</p>
                     <p className='furniture-show-desc'>{desc}</p>
                     <p style={{textTransform: 'uppercase'}} className='furniture-show-desc'>{color}</p>
-                    <p className='furniture-show-desc'>{width + ' x ' + height + ' x ' + depth}</p>
+                    <p className='furniture-show-desc'>
+                        {basket.width && basket.height && basket.depth ?
+                            basket.width + ' x ' + basket.height + ' x ' + basket.depth :
+                            width + 'x' + height + ' x ' + depth}
+                    </p>
                 </div>
             </div>
             <div style={{width: "53.3333%", marginLeft: 30, marginTop: '50px'}}>

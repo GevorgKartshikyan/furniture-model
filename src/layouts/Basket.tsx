@@ -22,6 +22,7 @@ const Basket: FC = () => {
         dispatch(saveBasket())
         toast.success('SAVED :)')
     }
+    console.log(basket)
     return (
         <>
             <ToastContainer
@@ -42,7 +43,7 @@ const Basket: FC = () => {
                     {basket.map((e: any) => (
                         <div key={e.id} className='basket-row'>
                             <div className='row-info'>
-                                <img src={e.image} alt="furniture" className='basket-image'/>
+                                <img src={e.image[0]} alt="furniture" className='basket-image'/>
                                 <p className='furniture-show-desc'>{e.desc}</p>
                             </div>
                             <div className='row-info'>

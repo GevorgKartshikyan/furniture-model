@@ -3,7 +3,7 @@ import {FurnitureShowAction} from "../helpers/types";
 import {useDispatch, useSelector} from "react-redux";
 import {addBasket, changeColor} from "../store/actions/furniture";
 import {toast} from "react-toastify";
-import {sides as sidesArr, boards, variants, options} from "../helpers/data";
+import {sides as sidesArr, boards, variants, options, testMaterials} from "../helpers/data";
 import Select from 'react-select';
 import Model from "./Model";
 import Modal from "react-modal";
@@ -62,11 +62,13 @@ const SelectedFurnitureInfo: FC<FurnitureShowAction> = ({image, width, height, d
     const [selectedId, setSelectedId] = useState('')
     const [imageIndex, setImageIndex] = useState(1)
     const [coating, setCoatings] = useState('')
+    const [showPrice, setShowPrice] = useState('')
     const [selectedWood, setSelectedWood] = useState({})
     const [edge, setEdge] = useState('2')
     const [sidesBoard, setSidesBoard] = useState({
         sides: {
             material: options[0].value,
+            materialName: '',
             coating: {
                 size: 0,
                 coatingMaterial: '',
@@ -105,6 +107,16 @@ const SelectedFurnitureInfo: FC<FurnitureShowAction> = ({image, width, height, d
                 // @ts-ignore
                 ...sidesBoard[selectedKey],
                 material: selectedOption.label
+            }
+        }));
+    };
+    const handleChangeCoating = (selectedOption: any, selectedKey: string) => {
+        setSidesBoard((prevSidesBoard) => ({
+            ...prevSidesBoard,
+            [selectedKey]: {
+                // @ts-ignore
+                ...sidesBoard[selectedKey],
+                materialName: selectedOption.label
             }
         }));
     };
@@ -152,6 +164,7 @@ const SelectedFurnitureInfo: FC<FurnitureShowAction> = ({image, width, height, d
         );
         setSelectedId(id)
         setSelectedSizes(sizes.filter((e) => e.id === id)[0])
+        setShowPrice(sizes.filter((e)=>e.id ===id)[0].price)
     };
     const handleQuantity = (method: string, id: string) => {
         setSizes(sizes.map((e) => {
@@ -211,7 +224,7 @@ const SelectedFurnitureInfo: FC<FurnitureShowAction> = ({image, width, height, d
                                 <p style={{marginTop: 20}}
                                    className='furniture-show-price'
                                 >
-                                    Select coating
+                                    Select coating style (if you want to)
                                 </p>
                                 <div style={{display: "flex"}}>
                                     {boards.map((e) => (
@@ -223,6 +236,19 @@ const SelectedFurnitureInfo: FC<FurnitureShowAction> = ({image, width, height, d
                                         />
                                     ))}
                                 </div>
+                                {coating ? (<>
+                                    <p style={{marginTop: 20}}
+                                       className='furniture-show-price'
+                                    >
+                                        Select coating material
+                                    </p>
+                                    <Select
+                                        // value={selectedWood}
+                                        placeholder='Select Wood'
+                                        onChange={(selectedOption) => handleChangeCoating(selectedOption, sidesArr[imageIndex - 1].key)}
+                                        options={testMaterials}
+                                    />
+                                </>) : null}
                                 <div className='input-block'>
                                     <p className='furniture-show-price' style={{marginTop: 15}}>Select Edge
                                         Thickness</p>
@@ -261,7 +287,7 @@ const SelectedFurnitureInfo: FC<FurnitureShowAction> = ({image, width, height, d
                         </div>
                     </div>
                     <div className='selected-furniture-desc'>
-                        <p className='furniture-show-price'>{price}</p>
+                        {showPrice ? <p className='furniture-show-price'>{showPrice}</p> : <p className='furniture-show-price'>{price}</p>}
                         <p className='furniture-show-desc'>{desc}</p>
                         <p style={{textTransform: 'uppercase'}} className='furniture-show-desc'>{color}</p>
                         <p className='furniture-show-desc'>
@@ -333,7 +359,9 @@ const SelectedFurnitureInfo: FC<FurnitureShowAction> = ({image, width, height, d
                 shouldCloseOnOverlayClick={true}
                 isOpen={isOpen}
             >
-                <Model onCloseModal={() => { setIsOpen(false) }}/>
+                <Model onCloseModal={() => {
+                    setIsOpen(false)
+                }}/>
             </Modal>
         </>
     )

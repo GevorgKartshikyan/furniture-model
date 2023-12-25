@@ -69,7 +69,4 @@ export default createReducer(initialState, (builder) => {
             state.basket = []
             window.localStorage.clear()
         })
-        .addCase(deleteSelectedModel , (state)=>{
-            state.selectedModel = {}
-        })
 })

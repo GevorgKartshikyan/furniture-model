@@ -32,6 +32,12 @@ export const options = [
     {value: 'Plywood', label: 'Plywood'},
     {value: 'MDF', label: 'MDF'},
 ];
+
+export const testMaterials = [
+    {value: 'Material-1', label: 'Material-1'},
+    {value: 'Material-2', label: 'Material-2'},
+    {value: 'Material-3', label: 'Material-3'},
+]
 export const boards = [
     {material:'Acacia', image: boardBgAcacia,id:1,},
     {material:'Oak', image: boardBgOak,id:2},

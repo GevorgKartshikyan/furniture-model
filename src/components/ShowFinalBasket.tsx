@@ -11,6 +11,7 @@ const ShowFinalBasket: FC<Props> = ({onCloseModal}) => {
     const dispatch = useDispatch()
     // @ts-ignore
     const basket = useSelector((state => state.furniture.basket))
+    console.log(basket)
     return (
         <div className=''>
             <div className="">
@@ -59,7 +60,8 @@ const ShowFinalBasket: FC<Props> = ({onCloseModal}) => {
                                         {e.sidesDetails?.sides?.coating?.size ? (
                                             <div className='show-details-info-text'>
                                                 <p>Coating Size</p>
-                                                <p className='furniture-show-desc'>{e.sidesDetails?.sides?.coating?.size}(m<sup>2</sup>)</p>
+                                                <p className='furniture-show-desc'>{e.sidesDetails?.sides?.coating?.size}(m<sup>2</sup>)
+                                                </p>
                                             </div>
                                         ) : null}
                                         {e.sidesDetails?.sides?.coating?.edge ? (
@@ -80,6 +82,10 @@ const ShowFinalBasket: FC<Props> = ({onCloseModal}) => {
                                                 <p className='furniture-show-desc'>{e.sidesDetails?.sides?.material}</p>
                                             </div>
                                         ) : null}
+                                        <div className='show-details-info-text'>
+                                            <p>Sizes</p>
+                                            <p className='furniture-show-desc'>{e.width}X{e.height}X{e.depth}</p>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className='basket-shop-row'>

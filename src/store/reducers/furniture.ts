@@ -1,13 +1,18 @@
 import {createReducer, type PayloadAction} from '@reduxjs/toolkit'
-import {addBasket, changeColor, decrement, deleteModel, increment, saveBasket, selectModel} from "../actions/furniture";
-import {ChangeColorAction, FieldsAction, FurnitureShowAction} from "../../helpers/types";
+import {
+    addBasket,
+    changeColor,
+    clearBasket,
+    decrement,
+    deleteModel, deleteSelectedModel,
+    increment,
+    saveBasket,
+    selectModel
+} from "../actions/furniture";
+import {ChangeColorAction, FurnitureShowAction} from "../../helpers/types";
 // @ts-ignore
 import { v4 as uuidV4 } from 'uuid'
 
-interface state {
-    selectModel : FurnitureShowAction
-    basket?: FieldsAction[]
-}
 const initialState = {
     selectedModel: {},
 // @ts-ignore
@@ -59,5 +64,11 @@ export default createReducer(initialState, (builder) => {
         })
         .addCase(saveBasket ,(state) => {
             window.localStorage.setItem('furnitureList' , JSON.stringify(state.basket))
+        })
+        .addCase(clearBasket ,  (state)=>{
+            state.basket = []
+        })
+        .addCase(deleteSelectedModel , (state)=>{
+            state.selectedModel = {}
         })
 })

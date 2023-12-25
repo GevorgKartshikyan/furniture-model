@@ -1,10 +1,8 @@
 import React, {FC, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {decrement, deleteModel, increment, saveBasket} from "../store/actions/furniture";
-import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Modal from "react-modal";
-import Model from "../components/Model";
 import ShowFinalBasket from "../components/ShowFinalBasket";
 
 const Basket: FC = () => {
@@ -25,24 +23,11 @@ const Basket: FC = () => {
 
     const handleSave = (): void => {
         dispatch(saveBasket())
-        toast.success('SAVED :)')
         setShowModalBasket(true)
     }
     console.log(basket)
     return (
         <>
-            <ToastContainer
-                position="top-center"
-                autoClose={1500}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="light"
-            />
             {basket.length > 0 ? (
                 <div className='basket'>
                     <h3 className='title'>Your Basket</h3>
@@ -71,7 +56,7 @@ const Basket: FC = () => {
                 shouldCloseOnOverlayClick={true}
                 isOpen={showModalBasket}
             >
-                <ShowFinalBasket/>
+                <ShowFinalBasket onCloseModal={()=>setShowModalBasket(false)}/>
             </Modal>
         </>
     )

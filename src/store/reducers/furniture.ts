@@ -67,6 +67,7 @@ export default createReducer(initialState, (builder) => {
         })
         .addCase(clearBasket ,  (state)=>{
             state.basket = []
+            window.localStorage.clear()
         })
         .addCase(deleteSelectedModel , (state)=>{
             state.selectedModel = {}

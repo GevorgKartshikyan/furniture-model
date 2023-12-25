@@ -103,7 +103,6 @@ const ShowFinalBasket: FC<Props> = ({onCloseModal}) => {
                                 toast.success('Your order is accepted')
                                 dispatch(clearBasket())
                                 dispatch(deleteSelectedModel())
-                                window.localStorage.clear()
                                 onCloseModal()
                             }}>Buy</button>
                         </div>

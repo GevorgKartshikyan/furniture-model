@@ -23,8 +23,6 @@ const FurnitureModels: FC = () => {
             <Carousel
                 wrapAround={true}
                 autoplay
-                renderCenterRightControls={()=>null}
-                renderCenterLeftControls={()=>null}
                 cellAlign='center'
                 autoplayInterval={1500}
                 renderBottomCenterControls={()=>null}
